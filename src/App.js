@@ -1,19 +1,23 @@
 import React, {useState} from 'react';
 import logo from './favicon.png';
 
-import { Card } from 'react-bootstrap'
-import Button from 'react-bootstrap/Button';
-// import Iframe from 'react-iframe'
+import { Card, Button, Modal } from 'react-bootstrap'
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 
 function App() {
+  const [Email, setEmail] = useState("")
+  const [show, setShow] = useState(false)
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
   const Paddle = window.Paddle;
   const openCheckout  = () => { 
     // eslint-disable-next-line
     const re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    if(!re.test(Email)) return document.getElementById("notice").innerHTML = '올바른 이메일 주소를 입력해주세요.'
+    if(!re.test(Email)) return handleShow()
+
     document.getElementById("notice").innerHTML = '결제를 완료해 주세요.'
     document.getElementById("button_buy").innerHTML = '결제 대기중'
     Paddle.Checkout.open({ 
@@ -29,10 +33,11 @@ function App() {
       } 
     })
   }
-  const [Email, setEmail] = useState("")
+  
   const email = (e) => {
     setEmail(e.target.value)
   }
+
   return (
     <div className="App-header">
       
@@ -59,6 +64,24 @@ function App() {
         </Card.Body>
       </Card>
       <p id="vat" style={{ size: '5px' }}>VAT별도.</p>
+
+      <Modal
+        show={show}
+        onHide={handleClose}
+        backdrop="static"
+        keyboard={false}
+        centered
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>경고</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          올바른 이메일 주소를 입력해주세요.
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="primary" onClick={handleClose}>이해하였습니다.</Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   )
 }
